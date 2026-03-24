@@ -1,16 +1,37 @@
 name: Build
 on:
   push:
-    branches:
-      - "**"
-      - "!main"
+    branches: ["**", "!main"]
+permissions:
+  contents: read
+  packages: write
+  security-events: write
 jobs:
-  Build:
+  resolve-versions:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
+    outputs:
+      build_args: ${{ steps.versions.outputs.build_args }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
-      - uses: ./.github/actions/docker
+      - uses: batinicaz/gha/.github/actions/resolve-versions@496ea41524e0a8cd55a996b721f6854c4c206b1d # ratchet:batinicaz/gha/.github/actions/resolve-versions@v1.9.3
+        id: versions
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          versions: |
+            [
+              {"arg": "TERRAFORM_VERSION", "repo": "hashicorp/terraform"},
+              {"arg": "TF_LINT_VERSION", "repo": "terraform-linters/tflint", "strip_v": false}
+            ]
+  build:
+    needs: resolve-versions
+    uses: batinicaz/gha/.github/workflows/docker.yml@496ea41524e0a8cd55a996b721f6854c4c206b1d # ratchet:batinicaz/gha/.github/workflows/docker.yml@v1.9.3
+    with:
+      push: false
+      build_args: ${{ needs.resolve-versions.outputs.build_args }}
+      no_cache_filter: build
+      smoke_test: |
+        # TODO: Update test repo and ref for your image
+        git clone --depth 1 --branch v1.2.9 https://github.com/batinicaz/oci-core /tmp/test
+        sudo chown -R 65532 /tmp/test
+        docker run --rm -v /tmp/test:/test -w /test "$IMAGE"
+        sudo chown -R "$(id -u):$(id -g)" /tmp/test
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
