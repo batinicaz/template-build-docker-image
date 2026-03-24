@@ -1,0 +1,11 @@
+# We always grab the latest stable version so if there's unpatched
+# vulnerabilities, we're just waiting for a patch
+ignore:
+  - package:
+      location: "/usr/bin/terraform"
+  - package:
+      location: "/usr/bin/tflint"
+  - package:
+      location: "/usr/local/bin/terraform"
+  - package:
+      location: "/usr/local/bin/tflint"
