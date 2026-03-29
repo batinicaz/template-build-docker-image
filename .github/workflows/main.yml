@@ -14,7 +14,7 @@ jobs:
     outputs:
       build_args: ${{ steps.versions.outputs.build_args }}
     steps:
-      - uses: batinicaz/gha/.github/actions/resolve-versions@496ea41524e0a8cd55a996b721f6854c4c206b1d # ratchet:batinicaz/gha/.github/actions/resolve-versions@v1.9.3
+      - uses: batinicaz/gha/.github/actions/resolve-versions@v1
         id: versions
         with:
           versions: |
@@ -24,7 +24,7 @@ jobs:
             ]
   build:
     needs: resolve-versions
-    uses: batinicaz/gha/.github/workflows/docker.yml@496ea41524e0a8cd55a996b721f6854c4c206b1d # ratchet:batinicaz/gha/.github/workflows/docker.yml@v1.9.3
+    uses: batinicaz/gha/.github/workflows/docker.yml@v1
     with:
       build_args: ${{ needs.resolve-versions.outputs.build_args }}
       no_cache_filter: build
