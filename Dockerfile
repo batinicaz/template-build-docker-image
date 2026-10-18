@@ -8,7 +8,7 @@ RUN mkdir "/executables"
 RUN curl -fL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -o terraform.zip && unzip terraform.zip && mv terraform /executables
 RUN curl -fL https://github.com/terraform-linters/tflint/releases/download/${TF_LINT_VERSION}/tflint_linux_amd64.zip -o tflint.zip && unzip tflint.zip && mv tflint /executables
 
-FROM cgr.dev/chainguard/python:latest-dev@sha256:f5915032c39146631447a42ef7421350d1a0312e4224a0658b96a4af47e56aa2
+FROM cgr.dev/chainguard/python:latest-dev@sha256:905b31747ebcae4242e0b71fcd2640c712b79a96f929811d3202b9716b66592a
 # Pre-commit setup
 ENV PATH="${PATH}:/home/nonroot/.local/bin"
 RUN pip3 install --no-cache-dir checkov pre-commit
